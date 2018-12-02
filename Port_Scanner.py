@@ -1,5 +1,8 @@
-
-
+'''
+# Python Port Scanner Automation #
+# 개발일 / 버전 : `18.12.02 / V 1.0  #
+# 아이디어, 개발 : zeromini #
+'''
 
 import os
 import nmap
