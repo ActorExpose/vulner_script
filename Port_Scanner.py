@@ -37,11 +37,12 @@ def file_read_scan():
 def excel_change():
 	print( ' Changing Excel Result.... ')
 	read_excel = pd.read_csv('c:/result.csv')
-	#print(read_excel)
 	read_excel_replace = read_excel.replace('host;hostname;hostname_type;protocol;port;name;state;product;extrainfo;reason;version;conf;cpe',None)
 	read_excel_drop = read_excel_replace.dropna(axis=1)
-	#print(read_excel_drop)
-	read_excel_drop.to_excel('c:/final_result.xlsx')
+	read_excel_drop_final = read_excel_drop['host;hostname;hostname_type;protocol;port;name;state;product;extrainfo;reason;version;conf;cpe'].str[0:-1].str.split(';',expand=True)
+	read_excel_drop_final.columns = ['host','hostname','hostname_type','protocol','port','name','state','product','extrainfo','reason','version','conf','cpe']
+	#print(read_excel_drop_final)
+	read_excel_drop_final.to_excel('c:/final_result.xlsx')
 
 	#read_result = read_excel.drop('host;hostname;hostname_type;protocol;port;name;state;product;extrainfo;reason;version;conf;cpe',axis=1)
 	#print(read_result)
