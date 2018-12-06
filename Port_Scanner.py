@@ -3,9 +3,9 @@ import nmap
 import sys
 import csv
 from threading import *
+from multiprocessing import Process
 import pandas as pd
 
-global result
 
 
 def main():
@@ -14,19 +14,19 @@ def main():
 
 def file_read_scan():
 	print (' Read File and Scanning Ready....')
-	try:
+	try:		
 		r = open ('c:/iplist.txt', mode='rt')
 		f = open ('c:/result.csv','w')
 		read_result = [line.split('\n') for line in r.readlines()]
 		r.close()
 		f.close()
 		nm = nmap.PortScanner()
-		file_flag = 0 
+		multi_flag = 0 
 
 		for i in read_result:
 			print('Scanning Ip Address : '+i[0])
 			ip_put = str(line.replace('\n',''))
-			result = nm.scan(hosts=i[0], ports='20-443', arguments='-sV')
+			result = nm.scan(hosts=i[0], ports='20', arguments='-sV')
 			with open('c:/result.csv','a') as f:		
 				f.writelines(nm.csv())
 					
@@ -49,6 +49,17 @@ def excel_change():
 	#read_excel_split = read_excel.split(';',expand=True)
 	#print(read_excel_split)
 
+def multi_proc_scan():
+	print(' Multi Process Scanning....')
+	scan_proc = ['a','b','c','d','e','f','g']
+	for proc_name in scan_proc:
+		proc_name = Process(target=file_read_scan)
+		proc_name.start()
+		proc_name.join()
+		
+		#for i in range ()
+		#i.start()
+		#i.join()
 
 
 
@@ -63,7 +74,8 @@ with open('result.csv','w') as f:
 '''
 
 if __name__ == '__main__':
-    	file_read_scan()
-    	excel_change()
+    	#file_read_scan()
+    	#excel_change()
+    	multi_proc_scan()
 
     
