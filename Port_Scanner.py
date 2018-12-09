@@ -3,8 +3,9 @@ import nmap
 import sys
 import csv
 from threading import *
-from multiprocessing import Process
+import multiprocessing
 import pandas as pd
+
 
 
 
@@ -12,28 +13,36 @@ def main():
 	print('port Scanning')
 
 
-def file_read_scan():
-	print (' Read File and Scanning Ready....')
+def file_read_scan(ip_addr):
+	#print (' Read File and Scanning Ready....')
+
+	'''
 	try:		
 		r = open ('c:/iplist.txt', mode='rt')
 		f = open ('c:/result.csv','w')
-		read_result = [line.split('\n') for line in r.readlines()]
-		r.close()
-		f.close()
+		read_result = [line.strip() for line in r.readlines()]
+		print(read_result)
+		#r.close()
+		#f.close()
 		nm = nmap.PortScanner()
 		multi_flag = 0 
 
-		for i in read_result:
-			print('Scanning Ip Address : '+i[0])
-			ip_put = str(line.replace('\n',''))
-			result = nm.scan(hosts=i[0], ports='20', arguments='-sV')
-			with open('c:/result.csv','a') as f:		
-				f.writelines(nm.csv())
-					
-	
 
-	except:
-		pass
+		for i in read_result: 
+			print('Scanning Ip Address : '+i)
+			result = nm.scan(hosts=i, 
+							ports='20,21,23,69,137,138,139,445,512,513,514,5500,5800,5900,22,3389,60000,1433,1434,1521,1522,1523,3306,80,443,80000,8008,8080,9000,7001,9744,7000,7090,8001,9001,9043,9090,9100,25,123', arguments='-sV')
+			with open('c:/result.csv','a') as f:		
+				f.writelines(nm.csv())			
+	'''
+	nm = nmap.PortScanner()
+	print('Scanning Ip Address : ' + ip_addr)
+	result = nm.scan(hosts=ip_addr, ports='20-443', arguments='-sV')
+	with open('c:/result.csv','a') as f:		
+		f.writelines(nm.csv())
+		print('Saving Result....')
+
+
 def excel_change():
 	print( ' Changing Excel Result.... ')
 	read_excel = pd.read_csv('c:/result.csv')
@@ -74,8 +83,20 @@ with open('result.csv','w') as f:
 '''
 
 if __name__ == '__main__':
+
+	print (' Read File and Scanning Ready....')
+	print (' MultiProcessing Starting....')
+	r = open ('c:/iplist.txt', mode='rt')
+	f = open ('c:/result.csv','w')
+	read_result = [line.strip() for line in r.readlines()]
+	pool = multiprocessing.Pool(processes=50)
+	pool.map(file_read_scan,read_result)
+	pool.close()
+	pool.join()
+	print(' Finish Scan & Saving Result ')
+	excel_change()
     	#file_read_scan()
-    	#excel_change()
-    	multi_proc_scan()
+    
+    	#multi_proc_scan()
 
     
