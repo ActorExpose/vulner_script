@@ -37,7 +37,7 @@ def file_read_scan(ip_addr):
 	'''
 	nm = nmap.PortScanner()
 	print('Scanning Ip Address : ' + ip_addr)
-	result = nm.scan(hosts=ip_addr, ports='20-443', arguments='-sV')
+	result = nm.scan(hosts=ip_addr, ports='20,21,22,23,25,69,80,123,137,138,139,443,445,512,513,514,1433,1434,1521,1522,1523,3306,3389,5500,5800,5900,6000,7000,7001,7090,8000,8001,8008,8080,9000,9001,9043,9090,9100,9744', arguments='-sV')
 	with open('c:/result.csv','a') as f:		
 		f.writelines(nm.csv())
 		print('Saving Result....')
@@ -70,6 +70,21 @@ def multi_proc_scan():
 		#i.start()
 		#i.join()
 
+def join_manager():
+	print('Join Table for manager')
+	read_result_scan = pd.read_excel('c:/final_result.xlsx', sheet_name='Sheet1')
+	print(read_result_scan)
+	read_manager_list = pd.read_excel('c:/manager.xlsx', sheet_name='Sheet1')
+	print(read_manager_list)
+	join_managers = pd.merge(read_result_scan, read_manager_list, how='outer')
+	print(join_managers)
+	columnsTitles = ['host','team','manager','hostname','hostname_type','protocol','port','name','state','product','extrainfo','reason','version','conf','cpe']
+	reindex_join_managers = join_managers.reindex(columns=columnsTitles)
+	print(reindex_join_managers)
+	reindex_join_managers.to_excel('c:/manager_result.xlsx')
+	#read_excel_manager = pd.read_csv('c:/manager.xlsx')
+	#print(read_excel_manager)
+
 
 
 '''
@@ -84,19 +99,19 @@ with open('result.csv','w') as f:
 
 if __name__ == '__main__':
 
+    # Ver 1 Making Scanning Table
 	print (' Read File and Scanning Ready....')
 	print (' MultiProcessing Starting....')
 	r = open ('c:/iplist.txt', mode='rt')
 	f = open ('c:/result.csv','w')
 	read_result = [line.strip() for line in r.readlines()]
-	pool = multiprocessing.Pool(processes=50)
+	pool = multiprocessing.Pool(processes=10)
 	pool.map(file_read_scan,read_result)
 	pool.close()
 	pool.join()
 	print(' Finish Scan & Saving Result ')
 	excel_change()
-    	#file_read_scan()
-    
-    	#multi_proc_scan()
+	join_manager()
+
 
     
