@@ -2,11 +2,10 @@ import os
 import nmap
 import sys
 import csv
+import datetime
 from threading import *
 import multiprocessing
 import pandas as pd
-
-
 
 
 def main():
@@ -44,7 +43,7 @@ def file_read_scan(ip_addr):
 
 
 def excel_change():
-	print( ' Changing Excel Result.... ')
+	print( 'Changing Excel Result.... ')
 	read_excel = pd.read_csv('c:/result.csv')
 	read_excel_replace = read_excel.replace('host;hostname;hostname_type;protocol;port;name;state;product;extrainfo;reason;version;conf;cpe',None)
 	read_excel_drop = read_excel_replace.dropna(axis=1)
@@ -59,7 +58,7 @@ def excel_change():
 	#print(read_excel_split)
 
 def multi_proc_scan():
-	print(' Multi Process Scanning....')
+	print('Multi Process Scanning....')
 	scan_proc = ['a','b','c','d','e','f','g']
 	for proc_name in scan_proc:
 		proc_name = Process(target=file_read_scan)
@@ -86,6 +85,9 @@ def join_manager():
 	#print(read_excel_manager)
 
 
+def time_manager(nowDatetime):
+	print(nowDatetime)
+
 
 '''
 nm = nmap.PortScanner()
@@ -99,9 +101,22 @@ with open('result.csv','w') as f:
 
 if __name__ == '__main__':
 
+	now = datetime.datetime.now()
+	nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
+
+	print ('###########################################')
+	print ('######## Starting Auto Port Scanner #######')
+	print ('###########################################')
+	print ('### Starting Time :  '+ nowDatetime + '###')
+	print ('###########################################')
+
+
+	time_manager(nowDatetime)
+
+	'''
     # Ver 1 Making Scanning Table
-	print (' Read File and Scanning Ready....')
-	print (' MultiProcessing Starting....')
+	print ('Read File and Scanning Ready....')
+	print ('MultiProcessing Starting....')
 	r = open ('c:/iplist.txt', mode='rt')
 	f = open ('c:/result.csv','w')
 	read_result = [line.strip() for line in r.readlines()]
@@ -112,6 +127,7 @@ if __name__ == '__main__':
 	print(' Finish Scan & Saving Result ')
 	excel_change()
 	join_manager()
+	'''
 
 
     
