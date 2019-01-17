@@ -72,10 +72,12 @@ def multi_proc_scan():
 def join_manager():
 	print('Join Table for manager')
 	read_result_scan = pd.read_excel('c:/final_result.xlsx', sheet_name='Sheet1')
-	print(read_result_scan)
+	print('Duplicated Delete')
+	read_result_scan_2 = read_result_scan.drop_duplicates()
+	print(read_result_scan_2)
 	read_manager_list = pd.read_excel('c:/manager.xlsx', sheet_name='Sheet1')
 	print(read_manager_list)
-	join_managers = pd.merge(read_result_scan, read_manager_list, how='outer')
+	join_managers = pd.merge(read_result_scan_2, read_manager_list, how='outer')
 	print(join_managers)
 	columnsTitles = ['host','team','manager','hostname','hostname_type','protocol','port','name','state','product','extrainfo','reason','version','conf','cpe']
 	reindex_join_managers = join_managers.reindex(columns=columnsTitles)
@@ -87,6 +89,14 @@ def join_manager():
 
 def time_manager(nowDatetime):
 	print(nowDatetime)
+
+
+def organize_data():
+	print (' Organize_data....')
+	organ_data = pd.read_excel('c:\manager_result.xlsx', sheet_name='Sheet1')
+	organ_data_clear = organ_data.dropna(axis=0, subset=('state',))
+	print (' Result...')
+	organ_data_clear.to_excel('c:/000_portscan_result.xlsx')
 
 
 '''
@@ -103,17 +113,17 @@ if __name__ == '__main__':
 
 	now = datetime.datetime.now()
 	nowDatetime = now.strftime('%Y-%m-%d %H:%M:%S')
+	#sys.stdout = open('c:/port_log/Port_Scan_Log.txt','w')
 
 	print ('###########################################')
 	print ('######## Starting Auto Port Scanner #######')
 	print ('###########################################')
 	print ('### Starting Time :  '+ nowDatetime + '###')
 	print ('###########################################')
+	print (' version _ 1.1 / Made By Zeromini')
 
 
 	time_manager(nowDatetime)
-
-	'''
     # Ver 1 Making Scanning Table
 	print ('Read File and Scanning Ready....')
 	print ('MultiProcessing Starting....')
@@ -127,7 +137,8 @@ if __name__ == '__main__':
 	print(' Finish Scan & Saving Result ')
 	excel_change()
 	join_manager()
-	'''
+	organize_data()
+	print ('DONE......')
 
 
     
