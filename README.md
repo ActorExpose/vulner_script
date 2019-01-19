@@ -8,4 +8,9 @@
  - 자산 담당자 Index 기반으로 IP table Join (Pandas)
  - 시각화 시행 (pandas)
  
+ <패치 필요>
+- Timeline Cell 추가
+- 시간 단위로 돌릴수있게 옵션 추가
+- ELK Stack 연계 
+ 
  
