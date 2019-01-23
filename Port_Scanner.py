@@ -6,7 +6,8 @@ import datetime
 from threading import *
 import multiprocessing
 import pandas as pd
-
+import glob
+import xlsxwriter
 
 def main():
 	print('port Scanning')
@@ -98,6 +99,72 @@ def organize_data():
 	print (' Result...')
 	organ_data_clear.to_excel('c:/000_portscan_result.xlsx')
 
+def seperate_sheet():
+	print(' ..... Ing...')
+	seperate_sheets = pd.read_excel('c:/000_portscan_result.xlsx')
+	seperate_sheets_del = seperate_sheets.drop([0,0], axis=0)
+	#port_numbers = ['20,21,22,23,25,69,80,123,137,138,139,443,445,512,513,514,1433,1434,1521,1522,1523,3306,3389,5500,5800,5900,6000,7000,7001,7090,8000,8001,8008,8080,9000,9001,9043,9090,9100,9744']
+	os.mkdir('c:/port_final_result')
+
+	port_numbers = ['80','443']
+	for ports_num in port_numbers:	
+		seperate_sheets_del_list = seperate_sheets_del[seperate_sheets_del.port == 'ports_num']
+		seperate_sheets_del_result_list = seperate_sheets_del_list[seperate_sheets_del_list.state == 'open']
+		seperate_sheets_del_result_list.to_excel('c:/port_final_result/temp_excel_'+ports_num+'.xlsx')
+
+	print('seperate Sheets..! Finish')
+
+def merge_sheet():
+
+	flist = [os.path.basename(x) for x in glob.glob(os.getcwd() + 'c:/port_final_result/*.xlsx')]
+
+	workbook = xlsxwriter.Workbook('c:/split_book.xlsx')
+
+	for sheet in flist:
+		worksheet = workbook.add_worksheet(sheet)
+    	with open(sheet, 'rb') as f:
+			reader = csv.reader(f)
+			for r, row in enumerate(reader):
+				for c, col in enumerate(row):
+					worksheet.write(r, c, col)
+	workbook.close()
+
+
+	'''
+	port_numbers = ['80','443']
+	for ports_num in port_numbers:
+		print ('Sperate' + ports_num)
+		seperate_sheets_del_result = seperate_sheets_del[seperate_sheets_del.port == 'ports_num']
+		seperate_sheets_del_result = seperate_sheets_del[seperate_sheets_del.state == 'open']
+		writer = seperate_sheets_del_result.ExcelWriter('c:/0000_test.xlsx', engine='xlsxwriter')
+		seperate_sheets_del_result.to_excel(writer, sheet_name='Port'+ports_num)
+		workbook = xlsxwriter.Workbook('c:/0000_test.xlsx')
+		worksheet = workbook.add_worksheet()
+	'''
+
+
+
+
+
+
+	''' 
+	seperate_sheets_del = seperate_sheets.drop([0,0], axis=0)
+	seperate_sheets_del = seperate_sheets_del[seperate_sheets_del.port == '80']
+	seperate_sheets_del = seperate_sheets_del[seperate_sheets_del.state == 'open']
+	writer = pd.ExcelWriter('c:/0000_test.xlsx', engine='openpyxl')
+	seperate_sheets_del.to_excel(writer, sheet_name = ' Port 80 ')
+	writer.save()
+	writer.close()
+	'''
+
+
+
+	#seperate_sheets_del.pivot_table(index=ports, values=80)
+
+
+	#seperate_sheets_del.to_excel('c:/0000_test.xlsx')
+
+
 
 '''
 nm = nmap.PortScanner()
@@ -124,6 +191,7 @@ if __name__ == '__main__':
 
 
 	time_manager(nowDatetime)
+	'''
     # Ver 1 Making Scanning Table
 	print ('Read File and Scanning Ready....')
 	print ('MultiProcessing Starting....')
@@ -138,6 +206,12 @@ if __name__ == '__main__':
 	excel_change()
 	join_manager()
 	organize_data()
+	'''
+	print ('Seperate Sheets....')
+	seperate_sheet()
+	print ('Merge sheets....')
+	merge_sheet()
+
 	print ('DONE......')
 
 
