@@ -6,8 +6,8 @@ import datetime
 from threading import *
 import multiprocessing
 import pandas as pd
-import glob
-import xlsxwriter
+from openpyxl import load_workbook
+
 
 def main():
 	print('port Scanning')
@@ -101,21 +101,29 @@ def organize_data():
 
 def seperate_sheet():
 	print(' ..... Ing...')
+
 	seperate_sheets = pd.read_excel('c:/000_portscan_result.xlsx')
 	seperate_sheets_del = seperate_sheets.drop([0,0], axis=0)
 	#port_numbers = ['20,21,22,23,25,69,80,123,137,138,139,443,445,512,513,514,1433,1434,1521,1522,1523,3306,3389,5500,5800,5900,6000,7000,7001,7090,8000,8001,8008,8080,9000,9001,9043,9090,9100,9744']
-	os.mkdir('c:/port_final_result')
-
-	port_numbers = ['80','443']
-	for ports_num in port_numbers:	
-		seperate_sheets_del_list = seperate_sheets_del[seperate_sheets_del.port == 'ports_num']
+		
+	port_numbers = ['20','21','22','23','25','69','80','123','137','138','139','443','445','512','513','514','1433','1434','1521','1522','1523','3306','3389','5500','5800','5900','6000','7000','7001','7090','8000','8001','8008','8080','9000','9001','9043','9090','9100','9744']
+	writer = pd.ExcelWriter('c:/000_portscan_result2.xlsx', engine='xlsxwriter')
+	for ports_num in port_numbers:
+		seperate_sheets_del_list = seperate_sheets_del[seperate_sheets_del.port == ports_num]
+		print(seperate_sheets_del_list)
 		seperate_sheets_del_result_list = seperate_sheets_del_list[seperate_sheets_del_list.state == 'open']
-		seperate_sheets_del_result_list.to_excel('c:/port_final_result/temp_excel_'+ports_num+'.xlsx')
+		print(seperate_sheets_del_result_list)
+		seperate_sheets_del_result_list.to_excel(writer, sheet_name='Port '+ports_num)
+
+	print('result')
+	writer.save()
+		
+
 
 	print('seperate Sheets..! Finish')
 
 def merge_sheet():
-
+	'''
 	flist = [os.path.basename(x) for x in glob.glob(os.getcwd() + 'c:/port_final_result/*.xlsx')]
 
 	workbook = xlsxwriter.Workbook('c:/split_book.xlsx')
@@ -128,7 +136,7 @@ def merge_sheet():
 				for c, col in enumerate(row):
 					worksheet.write(r, c, col)
 	workbook.close()
-
+	'''
 
 	'''
 	port_numbers = ['80','443']
@@ -141,12 +149,6 @@ def merge_sheet():
 		workbook = xlsxwriter.Workbook('c:/0000_test.xlsx')
 		worksheet = workbook.add_worksheet()
 	'''
-
-
-
-
-
-
 	''' 
 	seperate_sheets_del = seperate_sheets.drop([0,0], axis=0)
 	seperate_sheets_del = seperate_sheets_del[seperate_sheets_del.port == '80']
@@ -187,11 +189,11 @@ if __name__ == '__main__':
 	print ('###########################################')
 	print ('### Starting Time :  '+ nowDatetime + '###')
 	print ('###########################################')
-	print (' version _ 1.1 / Made By Zeromini')
+	print (' version _ 1.4 / Made By Zeromini')
 
 
 	time_manager(nowDatetime)
-	'''
+	
     # Ver 1 Making Scanning Table
 	print ('Read File and Scanning Ready....')
 	print ('MultiProcessing Starting....')
@@ -206,7 +208,6 @@ if __name__ == '__main__':
 	excel_change()
 	join_manager()
 	organize_data()
-	'''
 	print ('Seperate Sheets....')
 	seperate_sheet()
 	print ('Merge sheets....')
